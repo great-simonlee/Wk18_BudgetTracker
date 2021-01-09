@@ -30,23 +30,21 @@ function updateDB() {
     const transaction = db.transaction(["pendingList"], "readwrite");
     const store = transaction.objectStore("pendingList");
     const storeGetAll = store.getAll();
-
+    
     storeGetAll.onsuccess = function() {
-        if (storeGetAll.result.length > 0) {
+        const offlineDataLen = storeGetAll.result.length
+
+        if (offlineDataLen > 0) {
             fetch("/api/transaction/bulk", {
                 method: "POST",
                 body: JSON.stringify(storeGetAll.result),
                 headers: {
                     Accept: "application/json, text/plain, */*",
-                    "Content-Type": "application.json"
+                    "Content-Type": "application/json"
                 }
-            })
-            .then((res) => res.json())
-            .then(() => {
-                const transaction = db.transaction(["pendingList"], "readwrite");
-                const store = transaction.objectStore("pendingList");
-                store.clear();
-            })
+            }).then(
+                (res) => console.log((res.json()))
+                )
         }
     }
 };
